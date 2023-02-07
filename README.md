@@ -20,7 +20,7 @@ or
 
 `from setup_alphaProfiles import setup_profile_deadzone`
 
-`setup_profile_deadzone(sim, alpha_active = sim.ini.gas.alpha, alpha_dead = 1.e-4, r_dz_outer = 10*c.au, width_dz_outer = 1 * c.au)`
+`setup_profile_deadzone(sim, alpha_active = 1.e-3, alpha_dead = 1.e-4)`
 
 
 See the `run_alphaProfiles_XX.py` files for an example.
