@@ -76,7 +76,7 @@ def setup_profile_bumps(sim, Location = 40 * c.au, Amplitude = 4., Width = 1., G
 
 
 def setup_profile_deadzone(sim, alpha_active = 1.e-3, alpha_dead = 1.e-4, r_dz_outer = 10 * c.au, width_dz_outer = 1 * c.au,
-                        apply_to_sigma = False, correct_mass = True, copy_alpha_to_delta = False):
+                        apply_to_sigma = False, correct_mass = True, copy_alpha_to_delta = True):
     '''
     Add a dead zone profile following the parameterization of Garate et al.(2019, 2021).
     This implements a smooth exponential transition between the active and dead regions at the dead zone outer edge.
@@ -128,7 +128,7 @@ def setup_profile_deadzone(sim, alpha_active = 1.e-3, alpha_dead = 1.e-4, r_dz_o
 
 
     if copy_alpha_to_delta:
-        assign_delta_updaters(sim)
+        assign_Delta_updaters(sim)
 
     # Update
     sim.update()
@@ -139,7 +139,7 @@ def setup_profile_deadzone(sim, alpha_active = 1.e-3, alpha_dead = 1.e-4, r_dz_o
 ################################################################################################
 # Other helper routines
 ################################################################################################
-def get_disk_mass(sim):
+def get_DiskMass(sim):
     return np.sum(sim.grid.A * sim.gas.Sigma)
 
 def rescale_Sigma_with_Alpha(sim, alpha_0, correct_mass):
@@ -153,12 +153,12 @@ def rescale_Sigma_with_Alpha(sim, alpha_0, correct_mass):
 
     ----------------------------------------------
     '''
-    original_disk_mass = get_disk_mass(sim)
+    original_disk_mass = get_DiskMass(sim)
 
     sim.gas.Sigma *= alpha_0/sim.gas.alpha
     sim.dust.Sigma *= alpha_0/sim.gas.alpha[:, None]
 
-    scaled_disk_mass = get_disk_mass(sim)
+    scaled_disk_mass = get_DiskMass(sim)
 
     # Warning - some mass loss/gain occurs depending on the mass removed/added from the bumps.
     mass_ratio = scaled_disk_mass / original_disk_mass
@@ -172,11 +172,13 @@ def rescale_Sigma_with_Alpha(sim, alpha_0, correct_mass):
 
 
 
-def Copy_Alpha(sim):
+def get_Alpha(sim):
     return sim.gas.alpha
 
-def assign_delta_updaters(sim):
-    # Copy the alpha profle to the deltas
-    sim.dust.delta.rad.updater = Copy_Alpha
-    sim.dust.delta.turb.updater = Copy_Alpha
-    sim.dust.delta.vert.updater = Copy_Alpha
+def assign_Delta_updaters(sim):
+    '''
+    The dust delta turbulence parameters are assigned the same value as the gas turbulence profile
+    '''
+    sim.dust.delta.rad.updater = get_Alpha
+    sim.dust.delta.turb.updater = get_Alpha
+    sim.dust.delta.vert.updater = get_Alpha

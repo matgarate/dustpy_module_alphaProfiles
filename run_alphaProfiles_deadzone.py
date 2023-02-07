@@ -39,21 +39,14 @@ sim.initialize()
 # ALPHA PROFILE SETUP
 ################################
 
-from setup_alphaProfiles import setup_profile_bumps, setup_alphaProfiles
-
-
-# NOTE: Pick only one of the available profiles. Mixing them requires further work.
-
-# Basic setup of a single gap in the gas surface density profile
-# By default the bump profile initializes the perturbation in alpha and density profiles
-setup_profile_bumps(sim, Location = 40 * c.au, Amplitude = 4., Width = 1., GasBumpType = 'GAP')
+from setup_alphaProfiles import setup_profile_deadzone
 
 
 # Basic setup of a dead zone profile
-# By default it is applied only in the alpha
-#setup_profile_deadzone(sim, alpha_active = sim.ini.gas.alpha, alpha_dead = 1.e-4, r_dz_outer = 10*c.au, width_dz_outer = 1 * c.au)
+# By default it also assigns the gas alapha turbulence value to the dust delta turbulence value
+setup_profile_deadzone(sim, alpha_active = sim.ini.gas.alpha, alpha_dead = 1.e-4, r_dz_outer = 10*c.au, width_dz_outer = 1 * c.au)
 
-
+# NOTE: Pick only one of the available profiles. Mixing them requires further work.
 
 
 ################################
@@ -61,7 +54,7 @@ setup_profile_bumps(sim, Location = 40 * c.au, Amplitude = 4., Width = 1., GasBu
 ################################
 print("Running Simulation")
 
-sim.writer.datadir = "Simulation/"
+sim.writer.datadir = "Simulation_DeadZone/"
 sim.t.snapshots = np.linspace(0.5, 5.0, 10) * 1.e5 * c.year
 sim.writer.overwrite = True
 
