@@ -56,6 +56,11 @@ print("Running Simulation")
 
 sim.writer.datadir = "Simulation_DeadZone/"
 sim.t.snapshots = np.linspace(0.5, 5.0, 10) * 1.e5 * c.year
+
+
+# Due to some error we cannot write the dumpfiles for these simulations :(
+sim.writer.dumping = False
 sim.writer.overwrite = True
+sim.verbosity = 2
 
 sim.run()
